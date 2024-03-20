@@ -1,11 +1,22 @@
 import itertools
 import random
 import string
+import time
 
 def generate_passwords(length, characters):
-    print('making')
     return [''.join(combination) for combination in itertools.product(characters, repeat=length)]
-    
+
+def crack_password(password_to_crack, characters):
+    start_time = time.time()
+    for length in range(4, 9):
+        for combination in itertools.product(characters, repeat=length):
+            attempted_password = ''.join(combination)
+            if attempted_password == password_to_crack:
+                end_time = time.time()
+                print(f"Password cracked: {attempted_password}")
+                print(f"Time required to crack: {end_time - start_time} seconds")
+                return
+    print("Password not found!")
 
 def main():
     print("What kind of password will you create?")
@@ -45,6 +56,10 @@ def main():
     print("Generated passwords:")
     for password in passwords:
         print(password)
+
+    # Crack the first password
+    print("\nStarting to crack the first password...")
+    crack_password(passwords[0], string.digits)
 
 if __name__ == "__main__":
     main()
