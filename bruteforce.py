@@ -3,8 +3,39 @@ import random
 import string
 import time
 
-def generate_passwords(length, characters):
-    return [''.join(combination) for combination in itertools.product(characters, repeat=length)]
+def generate_passwords_1kind(num_passwords, length, characters):
+    passwords = []
+    for _ in range(num_passwords):
+        passwords.append(''.join(random.choices(characters, k=length)))
+    return passwords
+
+def generate_passwords_2kinds(num_passwords, length, characters):
+    passwords = []
+    for _ in range(num_passwords):
+        password = []
+        # Ensure at least one number
+        password.append(random.choice(string.digits))
+        # Generate the remaining characters
+        password.extend(random.choices(characters, k=length - 2))
+        # Shuffle the password to randomize the position of characters
+        random.shuffle(password)
+        passwords.append(''.join(password))
+    return passwords
+
+def generate_passwords_3kinds(num_passwords, length, characters):
+    passwords = []
+    for _ in range(num_passwords):
+        password = []
+        # Ensure at least one number
+        password.append(random.choice(string.digits))
+        # Ensure at least one alphabet
+        password.append(random.choice(string.ascii_letters))
+        # Generate the remaining characters
+        password.extend(random.choices(characters, k=length - 2))
+        # Shuffle the password to randomize the position of characters
+        random.shuffle(password)
+        passwords.append(''.join(password))
+    return passwords
 
 def crack_password(password):
     start_time = time.time()
@@ -25,28 +56,25 @@ def main():
     
     choice = input("Enter your choice: ")
 
+    num_passwords = int(input("Enter the number of passwords to generate: "))
+    password_length = int(input("Enter the length of each password: "))
+
     passwords = []
     if choice == '1':
         numbers = '0123456789'
-        for length in range(4, 9):
-            passwords.append(''.join(random.choices(numbers, k=length)))
+        passwords = generate_passwords_1kind(num_passwords, password_length, numbers)
     elif choice == '2':
         alphabet = string.ascii_letters
-        for length in range(4, 9):
-            passwords.append(''.join(random.choices(alphabet, k=length)))
+        passwords = generate_passwords_1kind(num_passwords, password_length, alphabet)
     elif choice == '3':
         numbers = '0123456789'
         alphabet = string.ascii_letters
-        for length in range(4, 9):
-            password = ''.join(random.choices(numbers + alphabet, k=length))
-            passwords.append(password)
+        passwords = generate_passwords_2kinds(num_passwords, password_length, numbers + alphabet)
     elif choice == '4':
         numbers = '0123456789'
         alphabet = string.ascii_letters
         symbols = string.punctuation
-        for length in range(4, 9):
-            password = ''.join(random.choices(numbers + alphabet + symbols, k=length))
-            passwords.append(password)
+        passwords = generate_passwords_3kinds(num_passwords, password_length, numbers + alphabet + symbols)
     else:
         print("Invalid choice!")
         return
@@ -55,10 +83,12 @@ def main():
     for password in passwords:
         print(password)
 
-    print("We are going to crack the first password using Brute Force algorithm.")
-    cracked_password, time_taken = crack_password(passwords[4])
-    print("Cracked Password:", cracked_password)
-    print("Time taken to crack:", time_taken, "seconds")
+    print("\nWe are going to crack all the passwords using Brute Force algorithm.")
+    for i, password in enumerate(passwords, 1):
+        print(f"\nCracking Password {i}...")
+        cracked_password, time_taken = crack_password(password)
+        print("Cracked Password:", cracked_password)
+        print("Time taken to crack:", time_taken, "seconds")
 
 if __name__ == "__main__":
     main()
