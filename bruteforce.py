@@ -83,12 +83,18 @@ def main():
     for password in passwords:
         print(password)
 
-    print("\nWe are going to crack all the passwords using Brute Force algorithm.")
+    
+    total_time = 0
     for i, password in enumerate(passwords, 1):
         print(f"\nCracking Password {i}...")
         cracked_password, time_taken = crack_password(password)
+        total_time += time_taken
         print("Cracked Password:", cracked_password)
         print("Time taken to crack:", time_taken, "seconds")
+
+    if num_passwords > 0:
+        average_time = total_time / num_passwords
+        print("\nAverage time to crack a password:", average_time, "seconds")
 
 if __name__ == "__main__":
     main()
