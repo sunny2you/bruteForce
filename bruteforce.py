@@ -6,17 +6,15 @@ import time
 def generate_passwords(length, characters):
     return [''.join(combination) for combination in itertools.product(characters, repeat=length)]
 
-def crack_password(password_to_crack, characters):
+def crack_password(password):
     start_time = time.time()
+    characters = string.ascii_letters + string.digits + string.punctuation
     for length in range(4, 9):
-        for combination in itertools.product(characters, repeat=length):
-            attempted_password = ''.join(combination)
-            if attempted_password == password_to_crack:
+        for guess in itertools.product(characters, repeat=length):
+            guess_password = ''.join(guess)
+            if guess_password == password:
                 end_time = time.time()
-                print(f"Password cracked: {attempted_password}")
-                print(f"Time required to crack: {end_time - start_time} seconds")
-                return
-    print("Password not found!")
+                return guess_password, end_time - start_time
 
 def main():
     print("What kind of password will you create?")
@@ -57,9 +55,10 @@ def main():
     for password in passwords:
         print(password)
 
-    # Crack the first password
-    print("\nStarting to crack the first password...")
-    crack_password(passwords[0], string.digits)
+    print("We are going to crack the first password using Brute Force algorithm.")
+    cracked_password, time_taken = crack_password(passwords[4])
+    print("Cracked Password:", cracked_password)
+    print("Time taken to crack:", time_taken, "seconds")
 
 if __name__ == "__main__":
     main()
